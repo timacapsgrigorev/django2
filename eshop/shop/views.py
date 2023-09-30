@@ -1,6 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Client, Product, Order
 from .forms import ClientForm, ProductForm, OrderForm
+from django.utils import timezone
+from datetime import timedelta
 
 def create_client(request):
     if request.method == 'POST':
@@ -144,3 +146,21 @@ def index(request):
         'welcome_message': 'Добро пожаловать в мой магазин!',
     }
     return render(request, 'shop/index.html', context)
+
+def ordered_products_list(request, period):
+    today = timezone.now()
+    start_date = today - timedelta(days=period)
+
+    orders = Order.objects.filter(
+        client=request.user,
+        created_at__gte=start_date,
+    )
+
+    products = Product.objects.filter(order__in=orders).distinct()
+
+    context = {
+        'products': products,
+        'period': period,
+    }
+
+    return render(request, 'shop/ordered_products_list.html', context)
