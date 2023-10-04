@@ -164,3 +164,13 @@ def ordered_products_list(request, period):
     }
 
     return render(request, 'shop/ordered_products_list.html', context)
+
+
+def all_orders(request):
+    orders = Order.objects.filter(client=request.user).order_by('-created_at')
+
+    context = {
+        'orders': orders,
+    }
+
+    return render(request, 'shop/all_orders.html', context)
