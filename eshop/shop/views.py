@@ -174,3 +174,7 @@ def all_orders(request):
     }
 
     return render(request, 'shop/all_orders.html', context)
+
+def client_detail(request, pk):
+    client = get_object_or_404(Client, pk=pk)
+    return render(request, 'shop/client_detail.html', {'client': client})
